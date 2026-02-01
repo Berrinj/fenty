@@ -363,6 +363,7 @@ a {
     background-color: var(--main-color-three);
     display: flex;
     justify-content: space-between;
+    position: relative;
 }
 
 .blog-date {
