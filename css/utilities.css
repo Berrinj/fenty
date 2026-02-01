@@ -67,10 +67,13 @@ a {
 
 .loader,
 .posts-loader,
+.comments-loader,
 .loader:before,
 .posts-loader:before,
+.comments-loader:before,
 .loader:after,
-.posts-loader:after {
+.posts-loader:after,
+.comments-loader:after {
     border-radius: 50%;
     width: 2.5em;
     height: 2.5em;
@@ -79,7 +82,8 @@ a {
 }
 
 .loader,
-.posts-loader {
+.posts-loader,
+.comments-loader {
     color: #797575;
     font-size: 7px;
     text-indent: -9999em;
@@ -90,21 +94,25 @@ a {
 
 .loader:before,
 .posts-loader:before,
+.comments-loader:before,
 .loader:after,
-.posts-loader:after {
+.posts-loader:after,
+.comments-loader:after {
     content: '';
     position: absolute;
     top: 0;
 }
 
 .loader:before,
-.posts-loader:before {
+.posts-loader:before,
+.comments-loader:before {
     left: -3.5em;
     animation-delay: -0.32s;
 }
 
 .loader:after,
-.posts-loader:after {
+.posts-loader:after,
+.comments-loader:after {
     left: 3.5em;
 }
 
