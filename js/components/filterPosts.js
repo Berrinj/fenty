@@ -11,6 +11,9 @@ export function sortPosts(selectedValue) {
     case "3":
       selectHeading.textContent = "FENTY SKIN";
       break;
+    case "12":
+      selectHeading.textContent = "FENTY HAIR";
+      break;
     case "5":
       selectHeading.textContent = "SAVAGE X";
       break;
