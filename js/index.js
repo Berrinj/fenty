@@ -1,3 +1,5 @@
+import "./components/footerComponent.js";
+
 const nav = document.querySelector(".main-menu");
 const hamburgerMenu = document.querySelector(".hamburger-menu");
 // import * as getPosts from "./fetchAPI/getPost.js";
