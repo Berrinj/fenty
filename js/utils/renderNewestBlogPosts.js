@@ -10,7 +10,7 @@ export async function renderNewestBlogPosts() {
     let newPostList = await getPosts(FENTY_EMBED_API_URL);
     console.log(newPostList);
     const postItemsHTML = newPostList.slice(0, 8).map((newPostItem) => {
-      return `<li><a href="single-post.html?id=${newPostItem.id}">${newPostItem.title.rendered}<p class="go-to-post">Les mer..</p></li></a></li>`;
+      return `<li><a href="/single-post/?id=${newPostItem.id}">${newPostItem.title.rendered}<p class="go-to-post">Les mer..</p></li></a></li>`;
     });
 
     newestBlogPostSection.innerHTML = postItemsHTML.join("");

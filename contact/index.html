@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="nb">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Marte Lilleberre">
+  <meta name="description"
+    content="Har du spørsmpål? Her kan du sende inn et kontaktskjema om du lurer på, eller savner, noe.">
+  <meta name="keywords" content="rihanna, fenty, fenty beauty, fenty skin, savagex, blog, kontakt, spørsmål, svar">
+  <title>Fenty.no - Kontakt</title>
+  <script type="module" src="/js/index.js"></script>
+  <link rel="icon" type="image/png" href="/img/icons/favicon.png">
+  <link rel="stylesheet" href="/css/index.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@600&family=Inter:wght@100;200;300;400;500;600;700&family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+    rel="stylesheet">
+  <script src="https://kit.fontawesome.com/1664c6557b.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+  <header>
+    <div class="header-image">
+      <a href="/">
+        <img src="/img/logo-white.png" alt="fenty site logo">
+      </a>
+    </div>
+    <div class="nav-container">
+      <nav class="main-menu">
+        <ul>
+          <li><a href="/">HJEM</a></li>
+          <li><a href="/about/">OM OSS</a></li>
+          <li class="sub-menu-start" aria-haspopup="true" aria-expanded="false"><a href="#">VAREMERKER
+              &#9660;</a>
+            <ul class="sub-menu">
+              <li><a href="/fenty-beauty/" tabindex="0">-FEИTY BEAUTY</a></li>
+              <li><a href="/fenty-skin/">-FENTY SKIN</a></li>
+              <li><a href="/savage-x/">-SAVAGEx</a></li>
+            </ul>
+          </li>
+          <li><a href="/discography/">MUSIKK</a></li>
+          <li class="active"><a href="/contact/">KONTAKT</a></li>
+        </ul>
+      </nav>
+      <div class="hamburger-menu"><i class="fa-solid fa-bars fa-2xl" style="color: #FFF;"></i></div>
+    </div>
+  </header>
+  <main>
+    <div class="contact-page-container">
+      <img class="page-header-img" src="/img/P10056222_2.avif" alt="bilde av Rihanna">
+      <div class="about-text">
+        <h1>Lurer du på noe?</h1>
+        <p>Har du et spørsmål om Rihanna eller noe angående hennes merkervarer kan du sende meg en melding, så
+          skal
+          jeg gjøre så godt jeg kan å svare på det!</p>
+        <p>Fyll ut skjemaet under med navn, email, emne, og skriv spørsmålet ditt i melding boksen.</p>
+      </div>
+      <div class="contact-form-container">
+
+        <form id="contact-form" action="https://fenty.no/wp-json/contact-form-7/v1/contact-forms/353/feedback"
+          method="post">
+          <fieldset>
+            <legend>Fyll ut skjemaet</legend>
+            <div class="input-control">
+              <label for="your-name" id="name-label">Navn*</label>
+              <input id="your-name" type="text" name="your-name" placeholder="Navn på over 5 karakterer..">
+              <div class="form-error"></div>
+            </div>
+            <div class="input-control">
+              <label for="your-email" id="email-label">Email*</label>
+              <input id="your-email" type="email" name="your-email" placeholder="Skriv inn din email adresse her..">
+              <div class="form-error"></div>
+            </div>
+            <div class="input-control">
+              <label for="your-subject" id="subject-label">Emne*</label>
+              <input id="your-subject" type="text" name="your-subject"
+                placeholder="Emnet må være på over 5 karkaterer..">
+              <div class="form-error"></div>
+            </div>
+            <div class="input-control">
+              <label for="your-message" id="message-label">Melding*</label>
+              <textarea id="your-message" name="your-message" rows="10"
+                placeholder="Meldingen din må være på over 5 karakterer.."></textarea>
+              <div class="form-error"></div>
+            </div>
+            <input type="hidden" name="_wpcf7_unit_tag" value="wpcf7-f91-p92-o1">
+            <div class="submit-form">
+              <button type="submit" id="submit">Send inn kontaktskjema</button>
+              <div class="error-message"></div>
+            </div>
+          </fieldset>
+        </form>
+
+      </div>
+    </div>
+  </main>
+  <footer>
+    <div class="footer-content">
+      <div class="left-footer">
+        <div class="footer-menu">
+          <p>Kjøp Fenty fra butikker uten toll:</p>
+          <ul>
+            <li><a href="https://fredrikoglouisa.no/sokeresultater/?searchterm=fenty"
+                target="_blank">Fredrikoglouisa.no</a>
+            </li>
+            <li><a href="https://www.sephora.se/sok/?q=fenty" target="_blank">Sephora.se</a></li>
+            <li><a href="https://eu.puma.com/no/en/fenty-x-puma" target="_blank">eu.Puma.com</a></li>
+            <li><a href="https://fentybeauty.com" target="_blank">Fentybeauty.com</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="center-footer">
+        <div class="copyright">
+          <p>Copyright Fenty.no 2024</p>
+          <p>All Rights Reserved</p>
+        </div>
+      </div>
+      <div class="right-footer">
+        <ul>
+          <li><a href="/fenty-beauty/">Om Fenty Beauty</a></li>
+          <li><a href="/fenty-skin/">Om Fenty Skin</a></li>
+          <li><a href="/savage-x/">Om SavageX</a></li>
+          <li><a href="/privacy-policy/">Personvernerklæring</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>

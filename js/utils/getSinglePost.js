@@ -74,7 +74,7 @@ export async function getSinglePost() {
                                 </div>
                                 <div class="gallery"></div>
                                 <div class="category">
-                                <p>Kategori: <a href="category.html?id=${categoryId}&categoryName=${categoryName}">${categoryName}</a></p>
+                                <p>Kategori: <a href="/category/?id=${categoryId}&categoryName=${categoryName}">${categoryName}</a></p>
                                 </div>
                                 <div id="go-back" onclick="history.back()">&larr; Gå tilbake</div>`;
 

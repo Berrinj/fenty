@@ -11,7 +11,7 @@ export async function renderNewestComments() {
       .slice(0, 5)
       .map(async (newComment) => {
         const postInfo = await getPostInfo(newComment.post);
-        return `<li><a href="single-post.html?id=${newComment.post}"><p class="comment-name">${newComment.author_name}</p> <p class="comment-info">har kommentert på ${postInfo.title.rendered}:</p> <div class="comment-content">${newComment.content.rendered}</div><p class="go-to-post">Se innlegg..</p></a></li>`;
+        return `<li><a href="/single-post/?id=${newComment.post}"><p class="comment-name">${newComment.author_name}</p> <p class="comment-info">har kommentert på ${postInfo.title.rendered}:</p> <div class="comment-content">${newComment.content.rendered}</div><p class="go-to-post">Se innlegg..</p></a></li>`;
       });
     newestCommentSection.innerHTML = (
       await Promise.all(commentItemsPromises)
