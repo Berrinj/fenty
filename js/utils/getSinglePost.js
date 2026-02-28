@@ -57,7 +57,7 @@ export async function getSinglePost() {
 
     contentContainer.innerHTML = `<img class="main-post-img" src="${imageUrl}" alt="${imageAltText}">
                                 <div class="breadcrumbs">
-                                    <p><a href="index.html">Hjem</a></p> / <p>${result.title.rendered}</p>
+                                    <p><a href="/">Hjem</a></p> / <p>${result.title.rendered}</p>
                                 </div>
                                 <h1>${result.title.rendered}</h1>
                                 <div class="single-blog-post-info">
