@@ -504,8 +504,7 @@ a {
     color: var(--main-color-two)
 }
 
-.instagram:hover,
-.twitter:hover {
+.social-link:hover {
     color: var(--main-color-two)
 }
 
