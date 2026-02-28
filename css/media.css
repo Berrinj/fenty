@@ -167,7 +167,8 @@
     }
 
     .blog-post-header-img img {
-        display: none;
+        position: absolute;
+        right: 0;
     }
 
     .new-posts-site-info-header {
