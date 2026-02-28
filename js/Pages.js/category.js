@@ -33,7 +33,7 @@ function createCategoryBlogPost(post) {
 
     const textMaxLength = 90;
 
-    blogPostCard.innerHTML += `<a href="single-post.html?id=${post.id}">
+    blogPostCard.innerHTML += `<a href="/single-post/?id=${post.id}">
     <div class="blog-posts-category-card">
                                 <img src="${imageUrl}" class="category-img" alt="${imageAltText}">
                                 <h2>${post.title.rendered}</h2>

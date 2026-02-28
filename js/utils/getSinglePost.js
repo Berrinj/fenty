@@ -57,7 +57,7 @@ export async function getSinglePost() {
 
     contentContainer.innerHTML = `<img class="main-post-img" src="${imageUrl}" alt="${imageAltText}">
                                 <div class="breadcrumbs">
-                                    <p><a href="index.html">Hjem</a></p> / <p>${result.title.rendered}</p>
+                                    <p><a href="/">Hjem</a></p> / <p>${result.title.rendered}</p>
                                 </div>
                                 <h1>${result.title.rendered}</h1>
                                 <div class="single-blog-post-info">
@@ -74,7 +74,7 @@ export async function getSinglePost() {
                                 </div>
                                 <div class="gallery"></div>
                                 <div class="category">
-                                <p>Kategori: <a href="category.html?id=${categoryId}&categoryName=${categoryName}">${categoryName}</a></p>
+                                <p>Kategori: <a href="/category/?id=${categoryId}&categoryName=${categoryName}">${categoryName}</a></p>
                                 </div>
                                 <div id="go-back" onclick="history.back()">&larr; Gå tilbake</div>`;
 
