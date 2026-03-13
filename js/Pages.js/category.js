@@ -1,5 +1,6 @@
 import { FENTY_EMBED_API_URL } from "../fetchAPI/embedAPI.js";
 import { getPosts } from "../utils/posts.js";
+import { getPostUrl } from "../utils/postUrls.js";
 
 const queryString = document.location.search;
 export const params = new URLSearchParams(queryString);
@@ -47,7 +48,9 @@ function createCategoryBlogPost(post) {
 
   const textMaxLength = 90;
 
-  blogPostCard.innerHTML += `<a href="/single-post/?id=${post.id}">
+  const postUrl = getPostUrl(post.id, post.slug);
+
+  blogPostCard.innerHTML += `<a href="${postUrl}">
     <div class="blog-posts-category-card">
                                 <img src="${imageUrl}" class="category-img" alt="${imageAltText}">
                                 <h2>${post.title.rendered}</h2>

@@ -1,5 +1,6 @@
 import { getPosts } from "../utils/posts.js";
 import { FENTY_EMBED_API_URL } from "../fetchAPI/embedAPI.js";
+import { getPostUrl } from "../utils/postUrls.js";
 
 const queryString = document.location.search;
 export const params = new URLSearchParams(queryString);
@@ -39,7 +40,9 @@ export function createCategoryBlogPost(post) {
     post._embedded["wp:featuredmedia"][0].alt_text;
   const imageAltText = featuredMediaAlt || `missing alt text`;
 
-  carousel.innerHTML += `<a href="/single-post/?id=${post.id}">
+  const postUrl = getPostUrl(post.id, post.slug);
+
+  carousel.innerHTML += `<a href="${postUrl}">
                                 <img src="${imageUrl}" class="category-img" alt="${imageAltText}">
                                 <h4>${post.title.rendered}</h4>
                                 </a>`;
