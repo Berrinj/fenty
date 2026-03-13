@@ -84,18 +84,22 @@ async function resolvePost(url: URL): Promise<WpPost | null> {
 
 export default async (request: Request, context: any) => {
   const response = await context.next();
+  const baseResponse = new Response(response.body, response);
+  baseResponse.headers.set("x-og-edge", "hit");
 
   try {
     const url = new URL(request.url);
     const post = await resolvePost(url);
-    const contentType = response.headers.get("content-type") || "";
+    const contentType = baseResponse.headers.get("content-type") || "";
 
     if (!post || !contentType.includes("text/html")) {
-      return response;
+      baseResponse.headers.set("x-og-edge-status", post ? "not-html" : "no-post");
+      return baseResponse;
     }
 
     if (typeof HTMLRewriter === "undefined") {
-      return response;
+      baseResponse.headers.set("x-og-edge-status", "no-htmlrewriter");
+      return baseResponse;
     }
 
     const title = (post.title?.rendered || "Fenty.no").trim();
@@ -121,14 +125,29 @@ export default async (request: Request, context: any) => {
     <link rel="canonical" href="${escapeAttr(canonicalUrl)}">
   `;
 
-    return new HTMLRewriter()
+    const transformed = new HTMLRewriter()
+      .on("head > title", {
+        element(element: any) {
+          element.setInnerContent(title);
+        },
+      })
+      .on('head > meta[name="description"]', {
+        element(element: any) {
+          element.setAttribute("content", description);
+        },
+      })
       .on("head", {
         element(element: any) {
           element.append(metaTags, { html: true });
         },
       })
-      .transform(response);
-  } catch {
-    return response;
+      .transform(baseResponse);
+
+    transformed.headers.set("x-og-edge-status", "injected");
+    return transformed;
+  } catch (error) {
+    console.error("post-og edge error:", error);
+    baseResponse.headers.set("x-og-edge-status", "error");
+    return baseResponse;
   }
 };
