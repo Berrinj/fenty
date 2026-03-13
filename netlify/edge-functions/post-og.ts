@@ -26,6 +26,37 @@ function escapeAttr(value: string) {
     .replace(/>/g, "&gt;");
 }
 
+function normalizeImageUrl(url: string | undefined) {
+  if (!url || typeof url !== "string") {
+    return FALLBACK_IMAGE;
+  }
+
+  const trimmed = url.trim();
+  if (!trimmed) {
+    return FALLBACK_IMAGE;
+  }
+
+  // Social crawlers prefer absolute https URLs.
+  if (trimmed.startsWith("//")) {
+    return `https:${trimmed}`;
+  }
+
+  if (trimmed.startsWith("http://")) {
+    return trimmed.replace("http://", "https://");
+  }
+
+  if (trimmed.startsWith("https://")) {
+    return trimmed;
+  }
+
+  // Relative URL fallback to site domain.
+  if (trimmed.startsWith("/")) {
+    return `${SITE_URL}${trimmed}`;
+  }
+
+  return FALLBACK_IMAGE;
+}
+
 function injectMetaIntoHtml(
   html: string,
   title: string,
@@ -128,8 +159,9 @@ export default async (request: Request, context: any) => {
       post.excerpt?.rendered ||
         "Her finner du blog innlegg om Rihannas varemerker og lanseringer, i tillegg til nyheter om Rihanna",
     );
-    const featuredImage =
-      post._embedded?.["wp:featuredmedia"]?.[0]?.source_url || FALLBACK_IMAGE;
+    const featuredImage = normalizeImageUrl(
+      post._embedded?.["wp:featuredmedia"]?.[0]?.source_url,
+    );
     const canonicalUrl = `${SITE_URL}/posts/${post.slug}/`;
 
     const metaTags = `
@@ -138,6 +170,10 @@ export default async (request: Request, context: any) => {
     <meta property="og:title" content="${escapeAttr(title)}">
     <meta property="og:description" content="${escapeAttr(description)}">
     <meta property="og:image" content="${escapeAttr(featuredImage)}">
+    <meta property="og:image:secure_url" content="${escapeAttr(featuredImage)}">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta property="og:url" content="${escapeAttr(canonicalUrl)}">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="${escapeAttr(title)}">
