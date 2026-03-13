@@ -187,10 +187,6 @@ export default async (request: Request, context: any) => {
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:url" content="${escapeAttr(canonicalUrl)}">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="${escapeAttr(title)}">
-    <meta name="twitter:description" content="${escapeAttr(description)}">
-    <meta name="twitter:image" content="${escapeAttr(featuredImage)}">
     <link rel="canonical" href="${escapeAttr(canonicalUrl)}">
   `;
 
