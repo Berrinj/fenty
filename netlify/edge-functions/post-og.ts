@@ -46,6 +46,10 @@ function normalizeImageUrl(url: string | undefined) {
   }
 
   if (trimmed.startsWith("https://")) {
+    // AVIF is not reliably supported by social crawlers (Facebook/Discord/X).
+    if (trimmed.toLowerCase().endsWith(".avif")) {
+      return FALLBACK_IMAGE;
+    }
     return trimmed;
   }
 
@@ -55,6 +59,13 @@ function normalizeImageUrl(url: string | undefined) {
   }
 
   return FALLBACK_IMAGE;
+}
+
+function getImageMimeType(url: string) {
+  const lower = url.toLowerCase();
+  if (lower.endsWith(".png")) return "image/png";
+  if (lower.endsWith(".webp")) return "image/webp";
+  return "image/jpeg";
 }
 
 function injectMetaIntoHtml(
@@ -162,6 +173,7 @@ export default async (request: Request, context: any) => {
     const featuredImage = normalizeImageUrl(
       post._embedded?.["wp:featuredmedia"]?.[0]?.source_url,
     );
+    const imageType = getImageMimeType(featuredImage);
     const canonicalUrl = `${SITE_URL}/posts/${post.slug}/`;
 
     const metaTags = `
@@ -171,7 +183,7 @@ export default async (request: Request, context: any) => {
     <meta property="og:description" content="${escapeAttr(description)}">
     <meta property="og:image" content="${escapeAttr(featuredImage)}">
     <meta property="og:image:secure_url" content="${escapeAttr(featuredImage)}">
-    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:type" content="${escapeAttr(imageType)}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:url" content="${escapeAttr(canonicalUrl)}">
