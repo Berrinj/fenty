@@ -8,9 +8,16 @@ import { getComments } from "./comments.js";
 
 const queryString = document.location.search;
 export const params = new URLSearchParams(queryString);
-export const id = params.get("id");
+let postId = params.get("id");
+const slugFromQuery = params.get("slug");
 
-const url = `${FENTY_API_URL}/${id}?_embed`;
+function getSlugFromPath(pathname) {
+  const match = pathname.match(/^\/posts\/([^/]+)\/?$/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
+const slugFromPath = getSlugFromPath(window.location.pathname);
+const resolvedSlug = slugFromQuery || slugFromPath;
 
 const main = document.querySelector("main");
 const mainContainer = document.querySelector(".single-blogpost-container");
@@ -21,8 +28,26 @@ const singleBlogPostContainer = document.querySelector(
 
 export async function getSinglePost() {
   try {
-    const response = await fetch(url);
-    const result = await response.json();
+    let result;
+
+    if (postId) {
+      const response = await fetch(`${FENTY_API_URL}/${postId}?_embed`);
+      result = await response.json();
+    } else if (resolvedSlug) {
+      const response = await fetch(
+        `${FENTY_API_URL}?slug=${encodeURIComponent(resolvedSlug)}&_embed`,
+      );
+      const postsBySlug = await response.json();
+      if (!Array.isArray(postsBySlug) || postsBySlug.length === 0) {
+        throw new Error("Fant ikke innlegg for slug");
+      }
+      result = postsBySlug[0];
+    } else {
+      throw new Error("Mangler post-id eller slug");
+    }
+
+    postId = result.id;
+
     contentContainer.innerHTML = ``;
     document.title = `Fenty - Blog innlegg: ${result.title.rendered}`;
     const featuredMedia =
@@ -37,7 +62,7 @@ export async function getSinglePost() {
     const imageAltText = featuredMediaAlt || `missing alt text`;
 
     const categoriesList = await getCategories(
-      `${FENTY_CATEGORY_API_URL}?post=${id}`,
+      `${FENTY_CATEGORY_API_URL}?post=${postId}`,
     );
     const categoryName =
       categoriesList.length > 0 ? categoriesList[0].name : "Uncategorized";
@@ -78,8 +103,10 @@ export async function getSinglePost() {
                                 </div>
                                 <div id="go-back" onclick="history.back()">&larr; Gå tilbake</div>`;
 
-    await modalClick();
+    await modalClick(postId);
     galleryClassList();
+    endpointURL = `https://wp.fenty.no/wp-json/wp/v2/comments?post=${postId}`;
+    await displayComments();
   } catch (error) {
     singleBlogPostContainer.innerHTML = `<div class="error">Beklager, en feil oppsto mens innlegget skulle lastes inn. <a href="javascript:history.back()">Gå tilbake</a></div>`;
     throw error;
@@ -107,8 +134,10 @@ function openModal(src, alt) {
   });
 }
 
-async function modalClick() {
-  const imagesAPI = await getPosts(`${FENTY_API_URL}/${id}/?_embed`);
+async function modalClick(resolvedPostId) {
+  const imagesAPI = await getPosts(
+    `${FENTY_API_URL}/${resolvedPostId}/?_embed`,
+  );
   const imgData = dataFromContentRendered(imagesAPI.content.rendered);
 
   const galleryContainer = document.querySelector(".wp-block-gallery");
@@ -141,12 +170,14 @@ function galleryClassList() {
 }
 
 const commentForm = document.getElementById("comment-form");
-document.addEventListener("DOMContentLoaded", function () {
-  commentForm.addEventListener("submit", function (event) {
-    event.preventDefault();
-    handleCommentSubmitted();
+if (commentForm) {
+  document.addEventListener("DOMContentLoaded", function () {
+    commentForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+      handleCommentSubmitted();
+    });
   });
-});
+}
 
 function handleCommentSubmitted() {
   const username = document.querySelector("#username");
@@ -154,11 +185,14 @@ function handleCommentSubmitted() {
   const comment = document.querySelector("#comment");
 
   if (validateInputs(username, email, comment)) {
+    if (!postId) {
+      return;
+    }
     const usernameValue = document.querySelector("#username").value;
     const emailValue = document.querySelector("#email").value;
     const commentValue = document.querySelector("#comment").value;
     const commentData = {
-      post: id,
+      post: postId,
       author_name: usernameValue,
       content: commentValue,
       author_email: emailValue,
@@ -225,7 +259,13 @@ const commentContent = document.querySelector(".comment-content");
 const noComment = document.querySelector(".no-comments");
 
 async function fetchCommentsAndUpdateUI() {
-  const comments = await getComments(`${FENTY_COMMENTS_API_URL}?post=${id}`);
+  if (!postId) {
+    return;
+  }
+
+  const comments = await getComments(
+    `${FENTY_COMMENTS_API_URL}?post=${postId}`,
+  );
 
   updateCommentSection(comments);
 }
@@ -262,14 +302,20 @@ function updateCommentSection(comments) {
 
 async function displayComments() {
   try {
-    const comments = await getComments(`${FENTY_COMMENTS_API_URL}?post=${id}`);
+    if (!postId) {
+      return;
+    }
+
+    const comments = await getComments(
+      `${FENTY_COMMENTS_API_URL}?post=${postId}`,
+    );
 
     if (comments.length === 0) {
       noComment.innerHTML = "Ingen kommentarer, vær den første!";
     }
 
     const commentsHeader = document.querySelector(".comments h4");
-    commentsHeader.innerHTML += ` (${comments.length})`;
+    commentsHeader.innerHTML = `Kommentarer (${comments.length})`;
 
     comments.forEach((comment) => {
       const formattedDate = new Date(comment.date).toLocaleDateString("nb-NO", {
@@ -293,13 +339,14 @@ async function displayComments() {
     commentContent.innerHTML = `<div class="error">En feil oppsto ved innlasting av kommentarer</div>`;
   }
 }
-
-displayComments();
-
-const endpointURL = `https://wp.fenty.no/wp-json/wp/v2/comments?post=${id}`;
+let endpointURL = "";
 const commentOnHold = document.querySelector(".comment-on-hold");
 
 function submitCommentToWordPress(commentData) {
+  if (!endpointURL) {
+    return;
+  }
+
   fetch(endpointURL, {
     method: "POST",
     headers: {

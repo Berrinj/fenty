@@ -3,6 +3,7 @@ import { getCategories } from "./categories.js";
 import { FENTY_CATEGORY_API_URL } from "../fetchAPI/categoriesAPI.js";
 import { getComments } from "./comments.js";
 import { FENTY_COMMENTS_API_URL } from "../fetchAPI/commentsAPI.js";
+import { getPostUrl } from "./postUrls.js";
 const main = document.querySelector("main");
 const blogContent = document.querySelector(".blog-content");
 
@@ -40,6 +41,7 @@ export function createBlogPost(post) {
           categoriesList.length > 0 ? categoriesList[0].name : "Ukategorisert";
         const categoryId =
           categoriesList.length > 0 ? categoriesList[0].id : `Undefinert`;
+        const postUrl = getPostUrl(post.id, post.slug);
 
         if (main) {
           blogPostCard.innerHTML = `<div class="blog-post-header">
@@ -53,14 +55,14 @@ export function createBlogPost(post) {
                                 
                                 <div class="blog-post-content">
                                     <div class="blog-post-img-title">
-                                    <a href="/single-post/?id=${post.id}">
+                                    <a href="${postUrl}">
                                         <img class="blog-post-main-img" src="${imageUrl}" alt="${imageAltText}">
                                         <h1 class="blog-post-title">${post.title.rendered}</h1></a>
                                     </div>
                                     <div class="blog-post-text">
                                     ${post.excerpt.rendered}
                                     </div>
-                                    <div id="read-more"><a href="/single-post/?id=${post.id}">Les mer.. &rarr;</a></div>
+                                    <div id="read-more"><a href="${postUrl}">Les mer.. &rarr;</a></div>
                                 </div>
                                 <div class="blog-post-info">
                                     <div class="author">

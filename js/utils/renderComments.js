@@ -1,6 +1,7 @@
 import { getComments } from "./comments.js";
 import { FENTY_COMMENTS_API_URL } from "../fetchAPI/commentsAPI.js";
 import { getPostInfo } from "./getPostInfo.js";
+import { getPostUrl } from "./postUrls.js";
 const newestCommentSection = document.querySelector(".newest-comments ul");
 
 export async function renderNewestComments() {
@@ -11,7 +12,8 @@ export async function renderNewestComments() {
       .slice(0, 5)
       .map(async (newComment) => {
         const postInfo = await getPostInfo(newComment.post);
-        return `<li><a href="/single-post/?id=${newComment.post}"><p class="comment-name">${newComment.author_name}</p> <p class="comment-info">har kommentert på ${postInfo.title.rendered}:</p> <div class="comment-content">${newComment.content.rendered}</div><p class="go-to-post">Se innlegg..</p></a></li>`;
+        const postPath = getPostUrl(newComment.post, postInfo.slug);
+        return `<li><a href="${postPath}"><p class="comment-name">${newComment.author_name}</p> <p class="comment-info">har kommentert på ${postInfo.title.rendered}:</p> <div class="comment-content">${newComment.content.rendered}</div><p class="go-to-post">Se innlegg..</p></a></li>`;
       });
     newestCommentSection.innerHTML = (
       await Promise.all(commentItemsPromises)
