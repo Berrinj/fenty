@@ -26,6 +26,32 @@ function escapeAttr(value: string) {
     .replace(/>/g, "&gt;");
 }
 
+function injectMetaIntoHtml(
+  html: string,
+  title: string,
+  description: string,
+  metaTags: string,
+) {
+  let updated = html;
+
+  if (/<title[\s\S]*?<\/title>/i.test(updated)) {
+    updated = updated.replace(/<title[\s\S]*?<\/title>/i, `<title>${escapeAttr(title)}</title>`);
+  }
+
+  if (/name=["']description["']/i.test(updated)) {
+    updated = updated.replace(
+      /<meta[^>]*name=["']description["'][^>]*>/i,
+      `<meta name="description" content="${escapeAttr(description)}">`,
+    );
+  }
+
+  if (/<\/head>/i.test(updated)) {
+    updated = updated.replace(/<\/head>/i, `${metaTags}\n</head>`);
+  }
+
+  return updated;
+}
+
 async function getPostById(id: string): Promise<WpPost | null> {
   const response = await fetch(`${WP_POSTS_API}/${id}?_embed`);
   if (!response.ok) {
@@ -97,11 +123,6 @@ export default async (request: Request, context: any) => {
       return baseResponse;
     }
 
-    if (typeof HTMLRewriter === "undefined") {
-      baseResponse.headers.set("x-og-edge-status", "no-htmlrewriter");
-      return baseResponse;
-    }
-
     const title = (post.title?.rendered || "Fenty.no").trim();
     const description = stripHtml(
       post.excerpt?.rendered ||
@@ -124,6 +145,19 @@ export default async (request: Request, context: any) => {
     <meta name="twitter:image" content="${escapeAttr(featuredImage)}">
     <link rel="canonical" href="${escapeAttr(canonicalUrl)}">
   `;
+
+    if (typeof HTMLRewriter === "undefined") {
+      const html = await baseResponse.text();
+      const injectedHtml = injectMetaIntoHtml(html, title, description, metaTags);
+      const fallbackResponse = new Response(injectedHtml, {
+        status: baseResponse.status,
+        statusText: baseResponse.statusText,
+        headers: baseResponse.headers,
+      });
+      fallbackResponse.headers.set("x-og-edge-status", "injected-fallback");
+      fallbackResponse.headers.set("content-type", "text/html; charset=UTF-8");
+      return fallbackResponse;
+    }
 
     const transformed = new HTMLRewriter()
       .on("head > title", {
