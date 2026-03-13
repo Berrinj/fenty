@@ -560,6 +560,11 @@ a {
     font-weight: 200;
 }
 
+.filter-posts {
+    display: flex;
+    flex-direction: column;
+}
+
 .filter-posts-by {
     text-align: center;
     margin: 7%;
