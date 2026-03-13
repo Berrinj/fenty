@@ -67,31 +67,42 @@ async function resolvePost(url: URL): Promise<WpPost | null> {
     return null;
   }
 
-  const slug = decodeURIComponent(slugMatch[1]);
+  let slug = "";
+  try {
+    slug = decodeURIComponent(slugMatch[1]);
+  } catch {
+    return null;
+  }
+
   return getPostBySlug(slug);
 }
 
 export default async (request: Request, context: any) => {
-  const url = new URL(request.url);
-  const post = await resolvePost(url);
-
   const response = await context.next();
-  const contentType = response.headers.get("content-type") || "";
 
-  if (!post || !contentType.includes("text/html")) {
-    return response;
-  }
+  try {
+    const url = new URL(request.url);
+    const post = await resolvePost(url);
+    const contentType = response.headers.get("content-type") || "";
 
-  const title = (post.title?.rendered || "Fenty.no").trim();
-  const description = stripHtml(
-    post.excerpt?.rendered ||
-      "Her finner du blog innlegg om Rihannas varemerker og lanseringer, i tillegg til nyheter om Rihanna",
-  );
-  const featuredImage =
-    post._embedded?.["wp:featuredmedia"]?.[0]?.source_url || FALLBACK_IMAGE;
-  const canonicalUrl = `${SITE_URL}/posts/${post.slug}/`;
+    if (!post || !contentType.includes("text/html")) {
+      return response;
+    }
 
-  const metaTags = `
+    if (typeof HTMLRewriter === "undefined") {
+      return response;
+    }
+
+    const title = (post.title?.rendered || "Fenty.no").trim();
+    const description = stripHtml(
+      post.excerpt?.rendered ||
+        "Her finner du blog innlegg om Rihannas varemerker og lanseringer, i tillegg til nyheter om Rihanna",
+    );
+    const featuredImage =
+      post._embedded?.["wp:featuredmedia"]?.[0]?.source_url || FALLBACK_IMAGE;
+    const canonicalUrl = `${SITE_URL}/posts/${post.slug}/`;
+
+    const metaTags = `
     <meta property="og:type" content="article">
     <meta property="og:site_name" content="Fenty.no">
     <meta property="og:title" content="${escapeAttr(title)}">
@@ -105,11 +116,14 @@ export default async (request: Request, context: any) => {
     <link rel="canonical" href="${escapeAttr(canonicalUrl)}">
   `;
 
-  return new HTMLRewriter()
-    .on("head", {
-      element(element: any) {
-        element.append(metaTags, { html: true });
-      },
-    })
-    .transform(response);
+    return new HTMLRewriter()
+      .on("head", {
+        element(element: any) {
+          element.append(metaTags, { html: true });
+        },
+      })
+      .transform(response);
+  } catch {
+    return response;
+  }
 };
