@@ -28,6 +28,7 @@ switch (window.location.pathname) {
     break;
   case "/single-post":
   case "/single-post/":
+  case "/single-post/index.html":
     import("../js/Pages.js/singlePost.js").then((module) => {});
     break;
   default:

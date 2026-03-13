@@ -62,6 +62,11 @@ async function resolvePost(url: URL): Promise<WpPost | null> {
     }
   }
 
+  const slugParam = url.searchParams.get("slug");
+  if (slugParam) {
+    return getPostBySlug(slugParam);
+  }
+
   const slugMatch = url.pathname.match(/^\/posts\/([^/]+)\/?$/);
   if (!slugMatch) {
     return null;

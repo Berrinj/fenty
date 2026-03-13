@@ -9,6 +9,7 @@ import { getComments } from "./comments.js";
 const queryString = document.location.search;
 export const params = new URLSearchParams(queryString);
 let postId = params.get("id");
+const slugFromQuery = params.get("slug");
 
 function getSlugFromPath(pathname) {
   const match = pathname.match(/^\/posts\/([^/]+)\/?$/);
@@ -16,6 +17,7 @@ function getSlugFromPath(pathname) {
 }
 
 const slugFromPath = getSlugFromPath(window.location.pathname);
+const resolvedSlug = slugFromQuery || slugFromPath;
 
 const main = document.querySelector("main");
 const mainContainer = document.querySelector(".single-blogpost-container");
@@ -31,9 +33,9 @@ export async function getSinglePost() {
     if (postId) {
       const response = await fetch(`${FENTY_API_URL}/${postId}?_embed`);
       result = await response.json();
-    } else if (slugFromPath) {
+    } else if (resolvedSlug) {
       const response = await fetch(
-        `${FENTY_API_URL}?slug=${encodeURIComponent(slugFromPath)}&_embed`,
+        `${FENTY_API_URL}?slug=${encodeURIComponent(resolvedSlug)}&_embed`,
       );
       const postsBySlug = await response.json();
       if (!Array.isArray(postsBySlug) || postsBySlug.length === 0) {

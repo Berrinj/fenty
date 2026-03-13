@@ -1,6 +1,6 @@
 [[redirects]]
   from = "/posts/*"
-  to = "/single-post/index.html"
+  to = "/single-post/index.html?slug=:splat"
   status = 200
 
 [[edge_functions]]
